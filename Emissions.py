@@ -5,7 +5,7 @@ Created on Thu May  5 11:27:30 2022
 @author: sebas
 """
 import matplotlib.pyplot as plt
-import csv#Call the CSV library
+import csv #Call the CSV library
 
 def main():
     
@@ -68,7 +68,7 @@ def cotwo_break(country_dict):
               'gas_co2','oil_co2','other_industry_co2']
     
     print("\n++++++" + country + "++++++\n")
-    print(country + " CO2 emissions breakdown:")
+    print(country + " CO2 emissions breakdown: ")
     #
     
     
@@ -91,8 +91,8 @@ def cotwo_break(country_dict):
     # Pie chart: provide two lists for values and labels
     # normalize option is needed when values do not add up to 1
     
-    plt.pie(list_values,labels=list_labels,wedgeprops = {"edgecolor":'black'})
-    plt.title(country + ' CO2 emissions breakdown')
+    plt.pie(list_values,labels=list_labels,wedgeprops = {"edgecolor":'black'},autopct='%1.1f%%', shadow = True, startangle=90,textprops = dict(color ="black"))
+    plt.title(country + ' CO2 emissions breakdown', fontsize=18)
     plt.tight_layout()
     plt.show()
     
@@ -111,7 +111,7 @@ def max_emission(country_dict):
     """
     total_ghg = max(total_ghg.items(), key=lambda x: x[1])
 
-    print(total_ghg[0] + ' had the maximum greenhouse gas emissions:' +
+    print(total_ghg[0] + ' had the maximum greenhouse gas emissions: ' +
           str(total_ghg[1]) +' kg per dollar of GDP') 
     #print(total_ghg)
             
@@ -180,8 +180,17 @@ def trend(dataBaseLabel, country_dict):
             list_values += [sorted_topten[line][1]]
             list_labels += [sorted_topten[line][0]]
     
-    print(list_values)
+    
     print(list_labels)
+
+    def add_value_label(x_list,y_list):
+        for i in range(1, len(x_list)+1):
+            plt.text(i-1,y_list[i-1],y_list[i-1],ha="center")
+
+    plt.title(dataBaseLabel + ' CO2 emissions breakdown', fontsize=18)
+    plt.xticks(rotation=30, ha='right')
+    add_value_label(list_labels,list_values)
+
     plt.bar(list_labels, list_values)
     plt.show()
     
@@ -206,7 +215,7 @@ def check_dataBase(country_dict):
     while True:
         
         try:
-            country = input('Please enter the country name:').title()
+            country = input('Please enter the country name: ').title()
             country_dict[country]
             return country
         except:
