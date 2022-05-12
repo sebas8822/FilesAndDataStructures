@@ -68,7 +68,7 @@ def cotwo_break(country_dict):
               'gas_co2','oil_co2','other_industry_co2']
     
     print("\n++++++" + country + "++++++\n")
-    print(country + " CO2 emissions breakdown: ")
+    print(country + " CO2 emissions breakdown:")
     #
     
     
@@ -77,16 +77,16 @@ def cotwo_break(country_dict):
         if (country_dict[country][header[i]]== ''):
             continue
         else:
-            print(header[i],': ', country_dict[country][header[i]] )
-            list_values += [float(country_dict[country][header[i]])]
+            print(header[i],': ', format(float(country_dict[country][header[i]])*1e+9, '.2e' ), 'Kg')
+            list_values += [float(country_dict[country][header[i]])*1e+9]
             list_labels += [header[i]]
     for val in list_values:
         result = result + val
     
-    #print(list_values)
+    print(list_values)
     
     print('*******************************') 
-    print('Total: ' + str(result) +  ' kg per person')
+    print('Total: ' + str(format(result,'.2e')) +  ' kg per person')
     
     # Pie chart: provide two lists for values and labels
     # normalize option is needed when values do not add up to 1
@@ -201,13 +201,13 @@ def energy_consu(country_dict):
     
     for line in country_dict:
             
-            list_values += [(float(country_dict[line]['energy_consumption'])/100)]
-    
+            #list_values += [str(format(float(country_dict[line]['energy_consumption'])*1e+6, '.2e'))]
+            list_values += [float(country_dict[line]['energy_consumption'])*1e+6]
     
     
     print(list_values)
     plt.boxplot(list_values)
-    plt.ylim(0,30)
+    plt.ylim(0,0.3e+10)
     plt.show()
     
 def check_dataBase(country_dict):
