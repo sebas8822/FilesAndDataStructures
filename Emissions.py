@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu May  5 11:27:30 2022
+@author: sebastian Ramirez
+student id=11736865
 
-@author: sebas
 """
 import matplotlib.pyplot as plt
 import csv #Call the CSV library
@@ -60,8 +61,8 @@ def cotwo_break(country_dict):
     list_labels = []
     
     # header for look up and print results
-    header = ['coal_co2','cement_co2','flaring_co2',
-              'gas_co2','oil_co2','other_industry_co2']
+    header = ['Coal','Cement','Flaring',
+              'Gas','Oil','Other Industry']
     
     print("\n++++++<" + country + ">++++++\n")
     print(country + " CO2 emissions breakdown:\n")
@@ -78,17 +79,17 @@ def cotwo_break(country_dict):
             # print and the breakdown
             print(header[i],': ', 
                   format((float(country_dict[country][header[i]])/
-                  float(country_dict[country]['population']))*1e+9,',.2f')
+                  float(country_dict[country]['Population']))*1e+9,',.2f')
                   )
             #storage in a list structure to use them to plot
             list_values += [(float(country_dict[country][header[i]])/
-                             float(country_dict[country]['population']))*1e+9]
+                             float(country_dict[country]['Population']))*1e+9]
             list_labels += [header[i]]
     
     
     # look up total CO2 / population     
-    total = (float(country_dict[country]['co2'])/
-             float(country_dict[country]['population']))*1e+9
+    total = (float(country_dict[country]['CO2'])/
+             float(country_dict[country]['Population']))*1e+9
                   
     
     #print total
@@ -98,7 +99,9 @@ def cotwo_break(country_dict):
     # Pie chart: provide two lists for values and labels
    
     
-    plt.pie(list_values,labels=list_labels,wedgeprops = {"edgecolor":'black'},autopct='%1.1f%%', shadow = True, startangle=90,textprops = dict(color ="black"))
+    plt.pie(list_values,labels=list_labels,wedgeprops = {"edgecolor":'black'},
+            autopct='%1.1f%%', shadow = True, startangle=90,
+            textprops = dict(color ="black"))
     plt.title(country + ' CO2 emissions breakdown', fontsize=18)
     plt.tight_layout()
     plt.show()
@@ -111,7 +114,8 @@ def max_emission(country_dict):
     total = {}
     # calculate the  total-GHG (greenhouse gas) emissions per dollar of GDP.
     for row in country_dict:
-        total[row] = (float(country_dict[row]['total_ghg'])/float(country_dict[row]['gdp']))*1e+9
+        total[row] = (float(country_dict[row]['Total GHG'])/
+                      float(country_dict[row]['GDP']))*1e+9
     """ 
     # I can sorted or go directly to the max number with the method 
     # below key=lambda x: x[1] it is A sorting mechanism that allows
@@ -153,13 +157,13 @@ def top_ghg(country_dict):
             continue
         #case menu
         if (user_option == 1):
-            trend('methane',country_dict)
+            trend('Methane',country_dict)
             
         if (user_option == 2):
-            trend('nitrous_oxide', country_dict)
+            trend('Nitrous Oxide', country_dict)
             
         if (user_option == 3):
-            trend('total_ghg', country_dict)
+            trend('Total GHG', country_dict)
         
         if (user_option == 4):# exit submenu
             break
@@ -174,19 +178,20 @@ def trend(dataBaseLabel, country_dict):
     topten = {}
     
     for row in country_dict:
-        topten[row] = (round(float(country_dict[row][dataBaseLabel])/float(country_dict[row]['population'])*1e+6, 2))
+        topten[row] = (round(float(country_dict[row][dataBaseLabel])/
+                             float(country_dict[row]['Population'])*1e+6, 2))
     # print(topten)
     
     sorted_topten = sorted(topten.items(), key=lambda x: x[1])
     
-    print(sorted_topten)
-    #print(type(sorted_topten[0][0]))
+   
     
     # list_values ans List labels
     """
     when it is sorted the dictionary, it convert into tuples every 
     pair this bring errors to convert into the list to plot the results 
     """
+    #storage top ten list of labels and values
     for line in range(len(sorted_topten)-10,len(sorted_topten)):
             
             list_values += [sorted_topten[line][1]]
@@ -194,59 +199,60 @@ def trend(dataBaseLabel, country_dict):
     
     
     #print(list_labels)
-
+    #function to print the values on the top of corresponding bar
     def add_value_label(x_list,y_list):
         for i in range(1, len(x_list)+1):
             plt.text(i-1,y_list[i-1],y_list[i-1],ha="center")
-
+            
+    #plot bar chart        
     plt.title(dataBaseLabel + ' CO2 emissions breakdown', fontsize=18)
-    plt.xticks(rotation=30, ha='right')
-    plt.ylabel(dataBaseLabel + '(Tonnes per year)')
-    add_value_label(list_labels,list_values)
+    plt.xticks(rotation=30, ha='right')# make readable labels
+    plt.ylabel(dataBaseLabel + '(Tonnes per year)')# y label
+    add_value_label(list_labels,list_values)# plot values text
     plt.bar(list_labels, list_values)
     plt.show()
     
         
     
 def energy_consu(country_dict):
+    # list to plot with box just require list values
     list_values = []
     
     for row in country_dict:
-            
-            #list_values += [str(format(float(country_dict[line]['energy_consumption'])*1e+6, '.2e'))]
-            list_values += [(float(country_dict[row]['energy_consumption'])/
-                             float(country_dict[row]['population']))*1e+6]
+            list_values += [(float(country_dict[row]['Energy Consumption'])/
+                             float(country_dict[row]['Population']))*1e+6]
     
-    
-    print(list_values)
+    #Plot box chart
     plt.boxplot(list_values)
-    #plt.ylim(0,0.3e+10)
     plt.ylabel('KiloWatt-hours')
     plt.show()
     
 def check_dataBase(country_dict):
     # initialize string 
-    entry = ''
+    
     while True:
         
         try:
             # input file name
             country = input('Please enter the country name: ').title()
             space_split = country.split() # ["item1", "item2,", "item3"]
-           
+            print(space_split)
             # process input reduce input error " "
             # print comparable words
+            entry = ''
             for item in range(len(space_split)):
                 entry += space_split[item]
                 if item < len(space_split)-1:
                     entry += ' '
                 else:
                     break
-             #look up the word at the dictionary exception if not found
-            country_dict[country]
-            return country
+            print(entry)
+            #look up the word at the dictionary exception if not found
+            country_dict[entry]
+            print(country_dict[entry])
+            return entry
         except:
-            print('that country is not in the database try again')    
+            print('That is an invalid or unknown country.')    
         
     
 
@@ -257,7 +263,6 @@ def file():
     print('CO-2 Emissions Data Explorer')
     print('------------------------------')
     
-
     
     #handle Incorrect database file names 
     while True:    
@@ -271,8 +276,7 @@ def file():
         except OSError:
             print('File not found try again')
             
-            
-            
+          
     #read the file .csv        
     carbon = csv.reader(file)
     #Create empty dictionary{} to populate 
@@ -281,18 +285,21 @@ def file():
     #jump the header
     next(carbon)
     
-    #Read the File and create loop to pass the data into the list
-    #The contry name is my key to access to the data create a dictionary 
+    #Read the File and create loop to pass the data into the dictionary
+    #The contry name is my key to access to the data create a subdictionary 
     #incide to the other main dictionary
-    #row[0] = key 
+    
+    #row[0] = key (country name) .title() 
+    #convert country title form reduce error when look up input user
     for row in carbon:
-        reader[row[0].title()] = {'co2':row[1],	'coal_co2':row[2],
-                          'cement_co2':row[3],	'flaring_co2':row[4],	
-                          'gas_co2':row[5],	'oil_co2':row[6],
-                          'other_industry_co2':row[7],	'total_ghg':row[8],
-                          'methane':row[9],	'nitrous_oxide':row[10],
-                          'population':row[11], 'gdp':row[12],
-                          'energy_consumption':row[13]}
+        reader[row[0].title()] = {'CO2':row[1],	'Coal':row[2],
+                          'Cement':row[3],	'Flaring':row[4],	
+                          'Gas':row[5],	'Oil':row[6],
+                          'Other Industry':row[7],	'Total GHG':row[8],
+                          'Methane':row[9],	'Nitrous Oxide':row[10],
+                          'Population':row[11], 'GDP':row[12],
+                          'Energy Consumption':row[13]}
+    print(reader)
     #close the file 
     file.close() 
     #return dictionary
