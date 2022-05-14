@@ -8,20 +8,15 @@ import matplotlib.pyplot as plt
 import csv #Call the CSV library
 
 def main():
-    
-    country_dict = file('carbon.csv')
-    
-    
+    #call the file and stored structure dictionary
+    country_dict = file()
+    #call main problem
     menu(country_dict)
-
-
-
-
-
 def menu(country_dict):
     
+    # do while user = 5 exception input handeling
     while True:
-    
+        # print menu
         print('--------------------------------------')
         print('Main Menu CO-2 Emissions Data Explorer')
         print('--------------------------------------')
@@ -31,8 +26,9 @@ def menu(country_dict):
         print("(4) Energy consumption distribution")
         print("(5) Exit")
         try:
-            
+            # input user
             user_option = int(input('Enter your choice: '))
+            #error handle
         except ValueError:
             print ('Invalid input!!. Enter an option between 1-5.')
             continue
@@ -40,20 +36,20 @@ def menu(country_dict):
         if not user_option in range(1, 6):
             print ('Invalid input. Enter a value between 1-5 .')
             continue
+        # entry case
+        if (user_option == 1):# option1
+            cotwo_break(country_dict)# call function
+            
+        if (user_option == 2):# option2
+            max_emission(country_dict)# call function
+            
+        if (user_option == 3):# option3
+            top_ghg(country_dict)# call function
         
-        if (user_option == 1):
-            cotwo_break(country_dict)
+        if (user_option == 4):# option4
+            energy_consu(country_dict)# call function
             
-        if (user_option == 2):
-            max_emission(country_dict)
-            
-        if (user_option == 3):
-            top_ghg(country_dict)
-        
-        if (user_option == 4):
-            energy_consu(country_dict)
-            
-        if (user_option == 5):
+        if (user_option == 5): # Exit 
             print ('Thanks for exploring the CO2 Emissions Data Base')
             break
     
@@ -62,34 +58,45 @@ def cotwo_break(country_dict):
     country = check_dataBase(country_dict)
     list_values = []
     list_labels = []
-    result = 0
     
+    # header for look up and print results
     header = ['coal_co2','cement_co2','flaring_co2',
               'gas_co2','oil_co2','other_industry_co2']
     
-    print("\n++++++" + country + "++++++\n")
-    print(country + " CO2 emissions breakdown:")
+    print("\n++++++<" + country + ">++++++\n")
+    print(country + " CO2 emissions breakdown:\n")
     #
     
     
-    #print the breackdown 
+    #print the breackdown to find the percapital of each emission is divided
+    #its total emissions by its population and multiply by 1e+9 to pass kg
     for i in range(0,6):
+        # avoid empty columms
         if (country_dict[country][header[i]]== ''):
             continue
         else:
-            print(header[i],': ', format(float(country_dict[country][header[i]])*1e+9, '.2e' ), 'Kg')
-            list_values += [float(country_dict[country][header[i]])*1e+9]
+            # print and the breakdown
+            print(header[i],': ', 
+                  format((float(country_dict[country][header[i]])/
+                  float(country_dict[country]['population']))*1e+9,',.2f')
+                  )
+            #storage in a list structure to use them to plot
+            list_values += [(float(country_dict[country][header[i]])/
+                             float(country_dict[country]['population']))*1e+9]
             list_labels += [header[i]]
-    for val in list_values:
-        result = result + val
     
-    print(list_values)
     
+    # look up total CO2 / population     
+    total = (float(country_dict[country]['co2'])/
+             float(country_dict[country]['population']))*1e+9
+                  
+    
+    #print total
     print('*******************************') 
-    print('Total: ' + str(format(result,'.2e')) +  ' kg per person')
+    print('Total: ' + str(format(total,',.2f')) +  ' kg per person')
     
     # Pie chart: provide two lists for values and labels
-    # normalize option is needed when values do not add up to 1
+   
     
     plt.pie(list_values,labels=list_labels,wedgeprops = {"edgecolor":'black'},autopct='%1.1f%%', shadow = True, startangle=90,textprops = dict(color ="black"))
     plt.title(country + ' CO2 emissions breakdown', fontsize=18)
@@ -98,21 +105,25 @@ def cotwo_break(country_dict):
     
     
 def max_emission(country_dict):
-
-    total_ghg = {}
     
+    
+    #initialize dictionary
+    total = {}
+    # calculate the  total-GHG (greenhouse gas) emissions per dollar of GDP.
     for row in country_dict:
-        total_ghg[row] = (float(country_dict[row]['total_ghg']))
+        total[row] = (float(country_dict[row]['total_ghg'])/float(country_dict[row]['gdp']))*1e+9
     """ 
     # I can sorted or go directly to the max number with the method 
     # below key=lambda x: x[1] it is A sorting mechanism that allows
     us to sort our dictionary by value. This is an example
     of a Lambda function, which is a function without a name
     """
-    total_ghg = max(total_ghg.items(), key=lambda x: x[1])
-
-    print(total_ghg[0] + ' had the maximum greenhouse gas emissions: ' +
-          str(total_ghg[1]) +' kg per dollar of GDP') 
+    # find the highest number using max method
+    total_max = max(total.items(), key=lambda x: x[1])
+    
+    #print result
+    print(total_max[0] + ' had the maximum greenhouse gas emissions: ' +
+          str(format(total_max[1], ',.2f')) +' kg per dollar of GDP') 
     #print(total_ghg)
             
 
@@ -120,6 +131,7 @@ def max_emission(country_dict):
     
 
 def top_ghg(country_dict):
+    #Submenu 
     while True:
         
         print('--------------------------------------')
@@ -130,7 +142,7 @@ def top_ghg(country_dict):
         print("(3) Total")
         print("(4) Back Main Menu")
         try:
-            
+            #input  handle exception 
             user_option = int(input('Enter your choice: '))
         except ValueError:
             print ('Invalid input!!. Enter an option between 1-4.')
@@ -139,7 +151,7 @@ def top_ghg(country_dict):
         if not user_option in range(1, 5):
             print ('Invalid input. Enter a value between 1-4 .')
             continue
-        
+        #case menu
         if (user_option == 1):
             trend('methane',country_dict)
             
@@ -149,28 +161,28 @@ def top_ghg(country_dict):
         if (user_option == 3):
             trend('total_ghg', country_dict)
         
-        if (user_option == 4):
+        if (user_option == 4):# exit submenu
             break
             
             
 def trend(dataBaseLabel, country_dict):
     
-     
+    # lists to keep values and labels 
     list_values = []
     list_labels = []
     
     topten = {}
     
     for row in country_dict:
-        topten[row] = (float(country_dict[row][dataBaseLabel]))
+        topten[row] = (round(float(country_dict[row][dataBaseLabel])/float(country_dict[row]['population'])*1e+6, 2))
     # print(topten)
     
     sorted_topten = sorted(topten.items(), key=lambda x: x[1])
     
-    print(sorted_topten[0][0])
-    print(type(sorted_topten[0][0]))
+    print(sorted_topten)
+    #print(type(sorted_topten[0][0]))
     
-    # list_values
+    # list_values ans List labels
     """
     when it is sorted the dictionary, it convert into tuples every 
     pair this bring errors to convert into the list to plot the results 
@@ -181,7 +193,7 @@ def trend(dataBaseLabel, country_dict):
             list_labels += [sorted_topten[line][0]]
     
     
-    print(list_labels)
+    #print(list_labels)
 
     def add_value_label(x_list,y_list):
         for i in range(1, len(x_list)+1):
@@ -189,8 +201,8 @@ def trend(dataBaseLabel, country_dict):
 
     plt.title(dataBaseLabel + ' CO2 emissions breakdown', fontsize=18)
     plt.xticks(rotation=30, ha='right')
+    plt.ylabel(dataBaseLabel + '(Tonnes per year)')
     add_value_label(list_labels,list_values)
-
     plt.bar(list_labels, list_values)
     plt.show()
     
@@ -199,23 +211,38 @@ def trend(dataBaseLabel, country_dict):
 def energy_consu(country_dict):
     list_values = []
     
-    for line in country_dict:
+    for row in country_dict:
             
             #list_values += [str(format(float(country_dict[line]['energy_consumption'])*1e+6, '.2e'))]
-            list_values += [float(country_dict[line]['energy_consumption'])*1e+6]
+            list_values += [(float(country_dict[row]['energy_consumption'])/
+                             float(country_dict[row]['population']))*1e+6]
     
     
     print(list_values)
     plt.boxplot(list_values)
-    plt.ylim(0,0.3e+10)
+    #plt.ylim(0,0.3e+10)
+    plt.ylabel('KiloWatt-hours')
     plt.show()
     
 def check_dataBase(country_dict):
-
+    # initialize string 
+    entry = ''
     while True:
         
         try:
+            # input file name
             country = input('Please enter the country name: ').title()
+            space_split = country.split() # ["item1", "item2,", "item3"]
+           
+            # process input reduce input error " "
+            # print comparable words
+            for item in range(len(space_split)):
+                entry += space_split[item]
+                if item < len(space_split)-1:
+                    entry += ' '
+                else:
+                    break
+             #look up the word at the dictionary exception if not found
             country_dict[country]
             return country
         except:
@@ -223,9 +250,9 @@ def check_dataBase(country_dict):
         
     
 
-def file(file_name): 
+def file(): 
     
-    
+    # print title
     print('------------------------------')
     print('CO-2 Emissions Data Explorer')
     print('------------------------------')
@@ -236,7 +263,7 @@ def file(file_name):
     while True:    
         
         try:
-            #file_name = input("Enter File name -> ")
+            file_name = input("Enter File name -> ")
             #open the file
             file = open(file_name,'r')
             break
@@ -246,7 +273,7 @@ def file(file_name):
             
             
             
-            
+    #read the file .csv        
     carbon = csv.reader(file)
     #Create empty dictionary{} to populate 
     reader = {}
@@ -259,14 +286,16 @@ def file(file_name):
     #incide to the other main dictionary
     #row[0] = key 
     for row in carbon:
-        reader[row[0]] = {'co2':row[1],	'coal_co2':row[2],
+        reader[row[0].title()] = {'co2':row[1],	'coal_co2':row[2],
                           'cement_co2':row[3],	'flaring_co2':row[4],	
                           'gas_co2':row[5],	'oil_co2':row[6],
                           'other_industry_co2':row[7],	'total_ghg':row[8],
                           'methane':row[9],	'nitrous_oxide':row[10],
                           'population':row[11], 'gdp':row[12],
                           'energy_consumption':row[13]}
+    #close the file 
     file.close() 
+    #return dictionary
     return reader
         
     
