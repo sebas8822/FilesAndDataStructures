@@ -7,6 +7,9 @@ student id=11736865
 """
 import matplotlib.pyplot as plt
 import csv #Call the CSV library
+import sys
+
+
 
 def main():
     #call the file and stored structure dictionary
@@ -18,6 +21,7 @@ def menu(country_dict):
     # do while user = 5 exception input handeling
     while True:
         # print menu
+        
         print('--------------------------------------')
         print('Main Menu CO-2 Emissions Data Explorer')
         print('--------------------------------------')
@@ -35,7 +39,7 @@ def menu(country_dict):
             continue
         
         if not user_option in range(1, 6):
-            print ('Invalid input. Enter a value between 1-5 .')
+            print ('Invalid input. Enter a value between 1-5.')
             continue
         # entry case
         if (user_option == 1):# option1
@@ -236,7 +240,7 @@ def check_dataBase(country_dict):
             # input file name
             country = input('Please enter the country name: ').title()
             space_split = country.split() # ["item1", "item2,", "item3"]
-            print(space_split)
+         
             # process input reduce input error " "
             # print comparable words
             entry = ''
@@ -246,10 +250,9 @@ def check_dataBase(country_dict):
                     entry += ' '
                 else:
                     break
-            print(entry)
+        
             #look up the word at the dictionary exception if not found
             country_dict[entry]
-            print(country_dict[entry])
             return entry
         except:
             print('That is an invalid or unknown country.')    
@@ -268,41 +271,69 @@ def file():
     while True:    
         
         try:
-            file_name = input("Enter File name -> ")
-            #open the file
-            file = open(file_name,'r')
-            break
+            file_name = str(input("Enter File name/type 'e' for exit -> "))
             
+            if file_name == 'e':
+                break
+                
+                        
+            
+            
+            #open the file
+            file = open(file_name,'r') 
+            
+
+            
+        
+        
+            
+        
+                   
+          
+            #read the file .csv        
+            carbon = csv.reader(file)
+            #Create empty dictionaryto populate 
+            reader = {}
+            
+                
+            
+            #jump the header
+            next(carbon)
+            
+            #carbon.readline()
+            
+            #Read the File and create loop to pass the data into the dictionary
+            #The contry name is my key to access to the data create a subdictionary 
+            #incide to the other main dictionary
+            
+            #row[0] = key (country name) .title() 
+            #convert country title form reduce error when look up input user
+        
+            for row in carbon:
+                reader[row[0].title()] = {'CO2':row[1],	'Coal':row[2],
+                                          'Cement':row[3],	'Flaring':row[4],	
+                                          'Gas':row[5],	'Oil':row[6],
+                                          'Other Industry':row[7],	'Total GHG':row[8],
+                                          'Methane':row[9],	'Nitrous Oxide':row[10],
+                                          'Population':row[11], 'GDP':row[12],
+                                          'Energy Consumption':row[13]}
+            break 
         except OSError:
             print('File not found try again')
-            
-          
-    #read the file .csv        
-    carbon = csv.reader(file)
-    #Create empty dictionary{} to populate 
-    reader = {}
-    
-    #jump the header
-    next(carbon)
-    
-    #Read the File and create loop to pass the data into the dictionary
-    #The contry name is my key to access to the data create a subdictionary 
-    #incide to the other main dictionary
-    
-    #row[0] = key (country name) .title() 
-    #convert country title form reduce error when look up input user
-    for row in carbon:
-        reader[row[0].title()] = {'CO2':row[1],	'Coal':row[2],
-                          'Cement':row[3],	'Flaring':row[4],	
-                          'Gas':row[5],	'Oil':row[6],
-                          'Other Industry':row[7],	'Total GHG':row[8],
-                          'Methane':row[9],	'Nitrous Oxide':row[10],
-                          'Population':row[11], 'GDP':row[12],
-                          'Energy Consumption':row[13]}
-    print(reader)
+        
+        except:
+            print('File empty or file problems please check enter correct file')
+        
+       
+    if file_name == 'e':
+        print('exit no data processed')
+        sys.exit()   
+             
+        
     #close the file 
     file.close() 
     #return dictionary
+    print(reader)
     return reader
         
     
