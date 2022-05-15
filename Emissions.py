@@ -11,6 +11,7 @@ import sys
 
 
 
+
 def main():
     #call the file and stored structure dictionary
     country_dict = file()
@@ -83,7 +84,7 @@ def cotwo_break(country_dict):
             # print and the breakdown
             print(header[i],': ', 
                   format((float(country_dict[country][header[i]])/
-                  float(country_dict[country]['Population']))*1e+9,',.2f')
+                          float(country_dict[country]['Population']))*1e+9,',.2f')
                   )
             #storage in a list structure to use them to plot
             list_values += [(float(country_dict[country][header[i]])/
@@ -256,17 +257,24 @@ def check_dataBase(country_dict):
             return entry
         except:
             print('That is an invalid or unknown country.')    
+
+
+
         
     
 
 def file(): 
     
+    def readerror():
+        print('File not processed')
+        sys.exit()  
+        
     # print title
     print('------------------------------')
     print('CO-2 Emissions Data Explorer')
     print('------------------------------')
     
-    
+   
     #handle Incorrect database file names 
     while True:    
         
@@ -274,28 +282,16 @@ def file():
             file_name = str(input("Enter File name/type 'e' for exit -> "))
             
             if file_name == 'e':
+                print("Exit")
                 break
-                
-                        
-            
             
             #open the file
             file = open(file_name,'r') 
             
-
-            
-        
-        
-            
-        
-                   
-          
             #read the file .csv        
             carbon = csv.reader(file)
             #Create empty dictionaryto populate 
             reader = {}
-            
-                
             
             #jump the header
             next(carbon)
@@ -308,37 +304,46 @@ def file():
             
             #row[0] = key (country name) .title() 
             #convert country title form reduce error when look up input user
-        
+            print('Loading......')
             for row in carbon:
-                reader[row[0].title()] = {'CO2':row[1],	'Coal':row[2],
-                                          'Cement':row[3],	'Flaring':row[4],	
-                                          'Gas':row[5],	'Oil':row[6],
-                                          'Other Industry':row[7],	'Total GHG':row[8],
-                                          'Methane':row[9],	'Nitrous Oxide':row[10],
-                                          'Population':row[11], 'GDP':row[12],
-                                          'Energy Consumption':row[13]}
+                
+                if row[0] == '' or row[0] == 0 :
+                    #raise ValueError('No data available File must not use')
+                    print('keys no found, file must be not used')
+                    readerror()
+                   
+                else:                    
+                    reader[row[0].title()] = {'CO2':row[1],	'Coal':row[2],
+                                              'Cement':row[3],	'Flaring':row[4],	
+                                              'Gas':row[5],	'Oil':row[6],
+                                              'Other Industry':row[7],	'Total GHG':row[8],
+                                              'Methane':row[9],	'Nitrous Oxide':row[10],
+                                              'Population':row[11], 'GDP':row[12],
+                                              'Energy Consumption':row[13]}
+                # check if the values that can be use as divisors or are # raise exception if not 
+                1/float(row[11])+1/float(row[12])+1/float(row[11])
             break 
         except OSError:
             print('File not found try again')
+        except ZeroDivisionError:
+            print('Population/GDP/Energy Consumption can not divide by zero')
         
+        except ValueError:
+            print('error some values could not convert string to float - '+
+                  'please check enter correct file')
         except:
-            print('File empty or file problems please check enter correct file')
+             print('File empty or file problems please check enter correct file')
         
        
     if file_name == 'e':
-        print('exit no data processed')
-        sys.exit()   
-             
-        
+        readerror()
+      
     #close the file 
     file.close() 
     #return dictionary
-    print(reader)
+    print('File load!!')
     return reader
         
-    
-    
-    
-    
+  
 
 main()
