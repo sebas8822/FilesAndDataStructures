@@ -6,6 +6,7 @@ The program perform some exploratory data analysis on a dataset of worldwide car
 # Data Source
 Ritchie, H. & Roser, M. (2020). CO₂ and Greenhouse Gas Emissions. Our World in Data. https://ourworldindata.org/co2-and-other-greenhouse-gas-emissions
 
+# About
 The program start, it prompt the user for the dataset file name and load its data into memory in appropriate data structures (lists, tuples, dictionaries etc.).
 Next, The program  present the user with a main menu containing these options:
 
